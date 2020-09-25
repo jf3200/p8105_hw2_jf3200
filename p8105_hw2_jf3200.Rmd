@@ -12,7 +12,7 @@ library(readxl)
 ## Problem 1 
 
 Read the Mr. Trashwheel dataset. 
-```{r}
+```{r trashwheel_df}
 trashwheel_df = 
   read_excel(
     "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
@@ -25,4 +25,60 @@ trashwheel_df =
     sports_balls = as.integer(sports_balls)
   )
 ```
+
+Read in precipitation data for 2018 and 2017
+```{r precip_df_2017_2018}
+precip_2018 = 
+  read_excel(
+    "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2018 Precipitation", 
+    skip = 1
+  ) %>% 
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+  mutate(year = 2018) %>% 
+  relocate(year)
+
+precip_2017 = 
+  read_excel(
+    "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+    sheet = "2017 Precipitation", 
+    skip = 1
+  ) %>% 
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+  mutate(year = 2017) %>% 
+  relocate(year)
+
+```
+
+
+Combine annual precipitation
+```{r combine_precip}
+precip_df = 
+  bind_rows(precip_2017, precip_2018)
+
+``` 
+
+Create month name 
+```{r month_name}
+
+month_df = 
+  tibble( 
+    month = 1:12, 
+    month_name = month.name
+  )
+
+precip_df = 
+  left_join(precip_df, month_df, by = "month")
+
+```
+
+This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, MD. As trash enters the harbor, the trashwheel collects that trash and stores it in a dumpster. The dataset contains information on year, month and trash collected. Some specific trash types that are reported on include `cigarette_butts`, `chip_bags` and `plastic_bottles`, among others. There are also some metrics regarding the trash including `weight_tons` and `volume_cubic_yards`. There are a total of `r nrow(trashwheel_df)` rows in the final dataset and a total of `r ncol(trashwheel_df)` columns. The median number of sportsballs in a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`.
+
+Additional data sheets include precipitation data by month. Here, we looked specifically at the years 2017 and 2018. There are a total of `r nrow(precip_df)` rows in the data for these two years. The columns in the datset include `r colnames(precip_df)`. The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()`and the total in 2018 was  `r precip_df %>% filter(year == 2017) %>% pull(total) %>% sum()`.
+
+## Problem 2 
+
+## Problem 3 
 
