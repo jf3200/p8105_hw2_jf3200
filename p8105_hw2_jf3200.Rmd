@@ -76,7 +76,7 @@ precip_df =
 
 This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, MD. As trash enters the harbor, the trashwheel collects that trash and stores it in a dumpster. The dataset contains information on year, month and trash collected. Some specific trash types that are reported on include `cigarette_butts`, `chip_bags` and `plastic_bottles`, among others. There are also some metrics regarding the trash including `weight_tons` and `volume_cubic_yards`. There are a total of `r nrow(trashwheel_df)` rows in the final dataset and a total of `r ncol(trashwheel_df)` columns. The median number of sportsballs in a dumpster in 2017 was `r trashwheel_df %>% filter(year == 2017) %>% pull(sports_balls) %>% median()`.
 
-Additional data sheets include precipitation data by month. Here, we looked specifically at the years 2017 and 2018. There are a total of `r nrow(precip_df)` rows in the data for these two years. The columns in the datset include `r colnames(precip_df)`. The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` and the total in 2017 was  `r precip_df %>% filter(year == 2017) %>% pull(total) %>% sum()`.
+Additional data sheets include precipitation data by month. Here, we looked specifically at the years 2017 and 2018. There are a total of `r nrow(precip_df)` rows in the data for these two years. The columns in the dataset include `r colnames(precip_df)`. The total precipitation in 2018 was `r precip_df %>% filter(year == 2018) %>% pull(total) %>% sum()` and the total in 2017 was  `r precip_df %>% filter(year == 2017) %>% pull(total) %>% sum()`.
 
 ## Problem 2 
 
@@ -105,22 +105,12 @@ The cleaning steps thus far have included renaming the columns to be all snake-c
 Following the data tidying, there are `r nrow(transit_df)` rows and `r ncol(transit_df)` columns. The variables in this dataset include `line`, station-level variables such as name, latitude and longitude, `route_name` and `route_number`, `entry`, `vending`, `entrance_type` and `ada`, which indicates ADA compliance. 
 
 
-Find distinct stations and answer questions
-```{r distinct_stations}
-#Make this a dataframe to call since we will use it to answer multiple questions
-
-transit_df_distinct =  
-  transit_df %>% 
-    distinct(station_name,line, 
-             .keep_all = TRUE)
-  
-```
-
-* The number of distinct stations defined by name and line is `r nrow(transit_df_distinct)`. 
-* The number of stations that are ADA compliant is `r transit_df_distinct %>% filter(ada==TRUE) %>% nrow()`. 
-* The proportion of station entrances/ exits without vending that allow entrance is `r round(transit_df %>% filter(vending=="NO", entry==TRUE) %>% nrow() / transit_df %>% filter(vending=="NO")%>% nrow(),2)`.
-* The number of distinct stations that serve the A train is `r transit_df_distinct %>% filter(route_number=="A") %>% nrow()`
-* Of the stations that serve the A train, `r transit_df_distinct %>% filter(route_number=="A", ada==TRUE) %>% nrow()` are ADA compliant
+* The number of distinct stations defined by name and line is `r transit_df %>% distinct(station_name, line) %>% nrow()`. 
+* The number of stations that are ADA compliant is 
+`r transit_df %>% distinct(station_name, line, .keep_all = TRUE) %>% filter(ada == TRUE) %>% nrow()`
+* The proportion of station entrances/ exits without vending that allow entrance is `r round(transit_df %>% filter(vending == "NO", entry == TRUE) %>% nrow() / transit_df %>% filter(vending == "NO")%>% nrow(),3)`.
+* The number of distinct stations that serve the A train is `r transit_df %>% distinct(station_name, line, .keep_all = TRUE) %>% filter(route_number == "A") %>% nrow()`
+* Of the stations that serve the A train, `r transit_df %>% distinct(station_name, line, .keep_all = TRUE) %>% filter(route_number == "A", ada ==  TRUE) %>% nrow()` are ADA compliant
 
 ## Problem 3 
 
